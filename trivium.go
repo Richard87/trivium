@@ -58,8 +58,9 @@ func NewTrivium(iv []byte, key []byte) *Trivium {
 }
 
 func (t *Trivium) Encrypt(content []byte) []byte {
-	bv := bitvector.NewBitVector(content, 8*len(content))
+	cleartext := bitvector.NewBitVector(content, 8*len(content))
 	ciphertext := bitvector.NewBitVector(make([]byte, len(content)), 8*len(content))
+	bv := t.state
 
 	for i := 0; i < bv.Length(); i++ {
 
@@ -74,7 +75,7 @@ func (t *Trivium) Encrypt(content []byte) []byte {
 		bv.Set(t2, 177)
 
 		keybit := bv.Element(65) ^ bv.Element(92) ^ bv.Element(161) ^ bv.Element(177) ^ bv.Element(242) ^ bv.Element(287)
-		result := keybit ^ bv.Element(i)
+		result := keybit ^ cleartext.Element(i)
 
 		ciphertext.Set(result, i)
 	}
